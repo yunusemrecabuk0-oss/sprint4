@@ -1,10 +1,17 @@
 import { useState, useEffect } from "react";
 import "./App.css";
 import { events } from "./data/events";
-import type { CampusEvent, Category } from "./types/campus-event";
+import type { Category } from "./types/campus-event";
 import { searchEvents, filterByCategory, findEventById } from "./utils/filter-events";
 
-type PageName = "home" | "events" | "detail" | "add" | "update";
+import type { PageName } from "./types/page";
+import Header from "./components/layout/Header";
+import Footer from "./components/layout/Footer";
+import Navigation from "./components/layout/Navigation";
+import EventList from "./components/events/EventList";
+import EventFilter from "./components/events/EventFilter";
+import EventDetail from "./components/events/EventDetail";
+import EventForm from "./components/forms/EventForm";
 
 function App() {
   const [page, setPage] = useState<PageName>("home");
@@ -35,20 +42,6 @@ function App() {
     }
   }, [page, selected]);
 
-  function renderCard(event: CampusEvent) {
-    return (
-      <article className="kart" key={event.id}>
-        <h2>{event.title}</h2>
-        <p className="kategori">{event.category}</p>
-        <p><strong>Tarih:</strong> {event.date}, {event.time}</p>
-        <p><strong>Yer:</strong> {event.location}</p>
-        <p><strong>Kontenjan:</strong> {event.capacity} kişi</p>
-        <p>{event.description}</p>
-        <button onClick={() => go("detail", event.id)}>Detayları gör</button>
-      </article>
-    );
-  }
-
   const upcoming = [...events]
     .sort((a, b) => a.date.localeCompare(b.date))
     .slice(0, 2);
@@ -58,42 +51,22 @@ function App() {
 
   return (
     <>
-      <header className="site-baslik">
-        <h1>{currentTitle}</h1>
-        <p>Fakültedeki seminer, atölye ve söyleşileri tek yerden takip edin.</p>
-        <nav className="menu">
-          <button
-            onClick={() => go("home")}
-            aria-current={page === "home" ? "page" : undefined}
-            className={page === "home" ? "aktif" : ""}
-          >
-            Ana Sayfa
-          </button>
-          <button
-            onClick={() => go("events")}
-            aria-current={page === "events" ? "page" : undefined}
-            className={page === "events" ? "aktif" : ""}
-          >
-            Etkinlikler
-          </button>
-          <button
-            onClick={() => go("add")}
-            aria-current={page === "add" ? "page" : undefined}
-            className={page === "add" ? "aktif" : ""}
-          >
-            Ekle
-          </button>
-        </nav>
-      </header>
+      <Header 
+        title={currentTitle} 
+        text="Fakültedeki seminer, atölye ve söyleşileri tek yerden takip edin." 
+      />
+      
+      <Navigation current={page} onNavigate={go} />
 
       <main>
         {/* ANA SAYFA */}
         {page === "home" && (
           <section className="etkinlik-listesi">
             <h2>Yaklaşan 2 Etkinlik</h2>
-            <div className="grid">
-              {upcoming.map(renderCard)}
-            </div>
+            <EventList 
+              events={upcoming} 
+              onShowDetail={(id) => go("detail", id)} 
+            />
             <button className="tumunu-gor" onClick={() => go("events")}>
               Tüm etkinlikleri gör
             </button>
@@ -105,60 +78,34 @@ function App() {
           <section className="etkinlikler-sayfasi">
             <h2>Tüm Etkinlikler</h2>
             <p>Ekim ayında kampüste düzenlenen etkinlikler.</p>
-            <div className="filtreler">
-              <input
-                type="search"
-                placeholder="Örn. atölye, kariyer"
-                value={searchText}
-                onChange={(e) => setSearchText(e.target.value)}
-              />
-              <select
-                value={category}
-                onChange={(e) => setCategory(e.target.value as Category | "")}
-              >
-                <option value="">Tümü</option>
-                {categories.map((cat) => (
-                  <option key={cat} value={cat}>
-                    {cat}
-                  </option>
-                ))}
-              </select>
-            </div>
-            <p className="sonuc-bilgi">
-              {filtered.length === 0 ? "Bulunamadı" : `${filtered.length} etkinlik listeleniyor.`}
-            </p>
-            <div className="grid">
-              {filtered.map(renderCard)}
-            </div>
+            
+            <EventFilter 
+              searchText={searchText}
+              category={category}
+              categories={categories}
+              onSearchChange={setSearchText}
+              onCategoryChange={setCategory}
+            />
+            
+            {filtered.length > 0 && (
+              <p className="sonuc-bilgi">{filtered.length} etkinlik listeleniyor.</p>
+            )}
+            
+            <EventList 
+              events={filtered} 
+              onShowDetail={(id) => go("detail", id)} 
+              emptyText="Bulunamadı" 
+            />
           </section>
         )}
 
         {/* DETAY SAYFASI */}
         {page === "detail" && selected && (
-          <article className="detay">
-            <div className="detay-ust">
-              {selected.image && (
-                <figure>
-                  <img src={selected.image} alt={`${selected.title} afişi`} />
-                </figure>
-              )}
-              <div className="kunye">
-                <h3>Etkinlik Künyesi</h3>
-                <p><strong>Tarih:</strong> {selected.date}, {selected.time}</p>
-                <p><strong>Yer:</strong> {selected.location}</p>
-                <p><strong>Kategori:</strong> {selected.category}</p>
-                <p><strong>Kontenjan:</strong> {selected.capacity} kişi</p>
-              </div>
-            </div>
-            <div className="detay-alt">
-              <h2>Açıklama</h2>
-              <p>{selected.description}</p>
-              <div className="detay-butonlar">
-                <button onClick={() => go("events")}>&larr; Listeye dön</button>
-                <button onClick={() => go("update", selected.id)}>Bu etkinliği güncelle</button>
-              </div>
-            </div>
-          </article>
+          <EventDetail 
+            event={selected}
+            onBack={() => go("events")}
+            onEdit={(id) => go("update", id)}
+          />
         )}
 
         {page === "detail" && !selected && (
@@ -170,46 +117,15 @@ function App() {
 
         {/* EKLE / GÜNCELLE FORMU */}
         {(page === "add" || page === "update") && (
-          <form className="form" onSubmit={(e) => e.preventDefault()}>
-            <h2>{page === "add" ? "Etkinlik Ekle" : "Etkinlik Güncelle"}</h2>
-            <p className="form-bilgi">Bu sprintte form sadece görünüm; kayıt yapılmaz.</p>
-
-            <label htmlFor="title">Etkinlik Adı</label>
-            <input id="title" maxLength={80} placeholder="Örn. Kariyer Günleri 2026" />
-
-            <label htmlFor="category">Kategori</label>
-            <select id="category">
-              <option value="">Seçiniz</option>
-              {categories.map((cat) => (
-                <option key={cat} value={cat}>
-                  {cat}
-                </option>
-              ))}
-            </select>
-
-            <label htmlFor="date">Tarih</label>
-            <input id="date" type="date" />
-
-            <label htmlFor="time">Saat</label>
-            <input id="time" type="time" />
-
-            <label htmlFor="location">Yer</label>
-            <input id="location" maxLength={100} placeholder="Örn. A Blok Konferans Salonu" />
-
-            <label htmlFor="capacity">Kontenjan</label>
-            <input id="capacity" type="number" min={1} />
-
-            <label htmlFor="description">Açıklama</label>
-            <textarea id="description" rows={5} maxLength={500} />
-
-            <button type="submit">Kaydet</button>
-          </form>
+          <EventForm 
+            title={page === "add" ? "Etkinlik Ekle" : "Etkinlik Güncelle"}
+            categories={categories}
+            onSubmit={() => window.scrollTo(0, 0)}
+          />
         )}
       </main>
 
-      <footer>
-        <p>Yunus Emre Çabuk — 2416501026 — 2026</p>
-      </footer>
+      <Footer />
     </>
   );
 }
