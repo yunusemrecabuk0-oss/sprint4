@@ -1,0 +1,105 @@
+    /* Yunus Emre Çabuk — 2416501026 */
+:root {
+  --no: 2416501026;
+  --ton: mod(var(--no), 360);
+  --renk-ana: hsl(var(--ton) 65% 38%);
+  --renk-zemin: hsl(var(--ton) 30% 97%);
+  --renk-metin: hsl(var(--ton) 20% 15%);
+  --renk-cizgi: hsl(var(--ton) 20% 85%);
+  --renk-hata: #c62828;
+  --font: "Courier New", monospace;
+  --bosluk-s: 0.5rem;
+  --bosluk-m: 1rem;
+  --bosluk-l: 2rem;
+  --kose: 8px;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  font-family: var(--font);
+  background: var(--renk-zemin);
+  color: var(--renk-metin);
+  margin: 0 auto;
+  padding: var(--bosluk-m);
+  max-width: 60rem;
+  line-height: 1.5;
+}
+
+a { color: var(--renk-ana); }
+
+header { margin-bottom: var(--bosluk-m); }
+h1 { color: var(--renk-ana); margin: 0 0 var(--bosluk-s); }
+h2 { margin-top: var(--bosluk-l); }
+
+nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--bosluk-s) var(--bosluk-m);
+  padding-block: var(--bosluk-s);
+  border-block: 1px solid var(--renk-cizgi);
+}
+nav a { text-decoration: none; font-weight: bold; padding: 0.5rem 0; }
+
+/* Kartlar: telefonda tek sütun */
+.kartlar {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--bosluk-m);
+}
+@media (min-width: 700px) {
+  .kartlar { grid-template-columns: repeat(3, 1fr); }
+  .kartlar.iki { grid-template-columns: repeat(2, 1fr); }
+}
+article {
+  background: #fff;
+  border: 1px solid var(--renk-cizgi);
+  border-radius: var(--kose);
+  padding: var(--bosluk-m);
+}
+article h3 { margin: 0 0 var(--bosluk-s); }
+article p { margin: 0.25rem 0; }
+article a { font-weight: bold; }
+
+/* Detay sayfası */
+.detay { display: grid; gap: var(--bosluk-m); }
+@media (min-width: 700px) {
+  .detay { grid-template-columns: 1fr 1fr; align-items: start; }
+}
+figure { margin: 0; }
+figure img { max-width: 100%; height: auto; display: block; }
+figcaption { font-size: 0.9rem; margin-top: var(--bosluk-s); }
+dl { display: grid; grid-template-columns: auto 1fr; gap: var(--bosluk-s) var(--bosluk-m); margin: 0; }
+dt { font-weight: bold; }
+dd { margin: 0; }
+
+/* Formlar */
+label { display: block; font-weight: bold; margin-top: var(--bosluk-m); }
+input, select, textarea {
+  display: block;
+  width: 100%;
+  min-height: 44px;
+  font: inherit;
+  padding: 0.5rem;
+  margin-top: 0.25rem;
+  background: #fff;
+  border: 1px solid var(--renk-cizgi);
+  border-radius: var(--kose);
+}
+input:user-invalid, select:user-invalid, textarea:user-invalid {
+  border-color: var(--renk-hata);
+  outline: 2px solid var(--renk-hata);
+}
+button {
+  font: inherit;
+  min-height: 44px;
+  margin-top: var(--bosluk-m);
+  padding: 0.5rem 1.5rem;
+  background: var(--renk-ana);
+  color: #fff;
+  border: 0;
+  border-radius: var(--kose);
+  cursor: pointer;
+}
+
+.geri { display: inline-block; margin-top: var(--bosluk-m); }

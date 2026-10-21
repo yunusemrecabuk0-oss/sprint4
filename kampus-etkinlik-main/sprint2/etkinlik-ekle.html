@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Etkinlik Ekle</title>
+  <link rel="stylesheet" href="css/2416501026.css">
+</head>
+<body>
+
+  <header>
+    <h1>Etkinlik Ekle</h1>
+  </header>
+
+  <nav>
+    <a href="index.html">Ana Sayfa</a>
+    <a href="etkinlikler.html">Etkinlikler</a>
+    <a href="etkinlik-ekle.html">Etkinlik Ekle</a>
+    <a href="etkinlik-guncelle.html">Etkinlik Güncelle</a>
+  </nav>
+
+  <main>
+    <form action="etkinlikler.html" method="get">
+
+      <div class="alan">
+        <label for="ad">Etkinlik adı</label>
+        <input type="text" id="ad" name="ad" required>
+        <span class="hata-mesaji">Etkinlik adı boş bırakılamaz.</span>
+      </div>
+
+      <div class="alan">
+        <label for="kategori">Kategori</label>
+        <select id="kategori" name="kategori" required>
+          <option value="">Seçiniz</option>
+          <option value="seminer">Seminer</option>
+          <option value="atolye">Atölye</option>
+          <option value="soylesi">Söyleşi</option>
+        </select>
+        <span class="hata-mesaji">Lütfen bir kategori seçin.</span>
+      </div>
+
+      <div class="alan">
+        <label for="tarih">Tarih</label>
+        <input type="date" id="tarih" name="tarih" required>
+        <span class="hata-mesaji">Tarih boş bırakıldı.</span>
+      </div>
+
+      <div class="alan">
+        <label for="aciklama">Açıklama</label>
+        <textarea id="aciklama" name="aciklama" rows="4" required></textarea>
+        <span class="hata-mesaji">Açıklama boş bırakılamaz.</span>
+      </div>
+
+      <button type="submit">Kaydet</button>
+    </form>
+  </main>
+
+</body>
+</html>
